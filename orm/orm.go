@@ -3,17 +3,21 @@ package orm
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"huashan/config"
-	"huashan/logger"
+	"gorm.io/gorm/logger"
+	llog "huashan/logger"
 	"strings"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
+	"time"
 )
 
 const (
-	MAXIDLECONN 	= 600
-	MAXOPENCONN 	= 600
 	CHARACTER 		= "utf8"
+
+	MaxIdleConn 	= 128
+	MaxOpenConn 	= 512
+	MaxLifeTime     = 3600
 )
 
 var (
@@ -42,31 +46,44 @@ func NewOrm() *gorm.DB {
 	if DB != nil {
 		return DB
 	}
+
+	gLogger := logger.New(llog.Logger,logger.Config{
+		SlowThreshold: 100 * time.Millisecond,
+		LogLevel:      logger.Info,
+		Colorful:      true,
+	})
+
 	sEngine := strings.ToLower(config.Get("database.engine"))
-	db, err := gorm.Open(sEngine, getDbEngineDSN(sEngine))
+	db, err := gorm.Open(mysql.Open(getDbEngineDSN(sEngine)), &gorm.Config{
+		PrepareStmt:                              true,
+		DisableForeignKeyConstraintWhenMigrating: true, //禁用外键约束
+		Logger:                                   gLogger,
+	})
+
 	if err != nil {
 		panic(err)
 	}
-	db.DB().SetMaxOpenConns(MAXIDLECONN)
-	db.DB().SetMaxIdleConns(MAXOPENCONN)
-	db.SetLogger(&logger.Logger)
 
-	// 开发环境开启sql日志
-	if config.DEBUG == config.Get("command.env") {
-		db.LogMode(true)
+	sqlDB,err := db.DB()
+	if  err != nil {
+		panic(err)
 	}
+	sqlDB.SetMaxOpenConns(MaxIdleConn)
+	sqlDB.SetMaxIdleConns(MaxOpenConn)
+	sqlDB.SetConnMaxLifetime(MaxLifeTime * time.Second)
+
 
 	return db
 }
 
 func Initialize() {
 	DB = NewOrm()
-	logger.Info("gorm init finish")
+	llog.Info("gorm init finish")
 }
 
 func UnInitialize() {
 	if DB != nil {
-		DB.Close()
+		DB = nil
 	}
-	logger.Info("gorm release finish")
+	llog.Info("gorm release finish")
 }

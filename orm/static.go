@@ -1,6 +1,6 @@
 package orm
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 type MQuery struct {
 	query *gorm.DB
@@ -40,8 +40,8 @@ func (p *MQuery)Get(out interface{}) error {
 	return p.query.Find(out).Error
 }
 
-func (p *MQuery)Count() (int,error) {
-	var count int
+func (p *MQuery)Count() (int64,error) {
+	var count int64
 	err := p.query.Count(&count).Error
 	return count,err
 }

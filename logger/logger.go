@@ -36,6 +36,10 @@ func (p *Model)Print(v ...interface{}) {
 	write(INFO, p.Content,v...)
 }
 
+func (p Model)Printf(s string,v ...interface{}) {
+	write(INFO, p.Content,fmt.Sprintf(s,v...))
+}
+
 func (p *Model)Info(v ...interface{}) {
 	write(INFO, p.Content,v...)
 }
@@ -72,6 +76,10 @@ func Debug(v ...interface{}) {
 
 func Print(v ...interface{}) {
 	Logger.Print(v...)
+}
+
+func Printf(s string, v ...interface{}) {
+	Logger.Printf(s,v...)
 }
 
 func Info(v ...interface{}) {

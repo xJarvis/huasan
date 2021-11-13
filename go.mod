@@ -10,8 +10,9 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gogo/protobuf v1.3.2
 	github.com/jakecoffman/cron v0.0.0-20190106200828-7e2009c226a5
-	github.com/jinzhu/gorm v1.9.16
 	github.com/kr/beanstalk v0.0.0-20180818045031-cae1762e4858
 	github.com/pkg/errors v0.9.1
 	gopkg.in/ini.v1 v1.63.2
+	gorm.io/driver/mysql v1.0.3
+    gorm.io/gorm v1.20.5
 )
