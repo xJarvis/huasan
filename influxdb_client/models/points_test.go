@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"huashan/influxdb_client/models"
+	"github.com/xJarvis/huashan/influxdb_client/models"
 )
 
 var (

@@ -14,7 +14,7 @@
 package exaes
 
 import (
-	"huashan/excrypt"
+	"github.com/xJarvis/huashan/excrypt"
 	"crypto/aes"
 	"fmt"
 )

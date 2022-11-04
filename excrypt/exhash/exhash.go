@@ -15,7 +15,7 @@
 package exhash
 
 import (
-	"huashan/excrypt"
+	"github.com/xJarvis/huashan/excrypt"
 	"crypto/hmac"
 )
 

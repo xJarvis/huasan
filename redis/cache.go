@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"huashan/config"
+	"github.com/xJarvis/huashan/config"
 	"encoding/json"
 	"github.com/pkg/errors"
 	"strconv"

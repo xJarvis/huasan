@@ -1,7 +1,7 @@
 package exsignal
 
 import (
-	"huashan/logger"
+	"github.com/xJarvis/huashan/logger"
 	"os"
 	"os/signal"
 	"syscall"

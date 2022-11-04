@@ -1,7 +1,7 @@
 package exhttp
 
 import (
-	"huashan/logger"
+	"github.com/xJarvis/huashan/logger"
 	"bytes"
 	"encoding/json"
 	"errors"

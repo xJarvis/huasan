@@ -15,7 +15,7 @@
 package exdes
 
 import (
-	"huashan/excrypt"
+	"github.com/xJarvis/huashan/excrypt"
 	"crypto/des"
 	"fmt"
 )

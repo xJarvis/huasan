@@ -3,12 +3,12 @@ package orm
 import (
 	"errors"
 	"fmt"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"huashan/config"
 	"gorm.io/gorm/logger"
+	"huashan/config"
 	llog "huashan/logger"
 	"strings"
-	"gorm.io/driver/mysql"
 	"time"
 )
 
@@ -71,7 +71,6 @@ func NewOrm() *gorm.DB {
 	sqlDB.SetMaxOpenConns(MaxIdleConn)
 	sqlDB.SetMaxIdleConns(MaxOpenConn)
 	sqlDB.SetConnMaxLifetime(MaxLifeTime * time.Second)
-
 
 	return db
 }

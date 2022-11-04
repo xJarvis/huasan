@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"huashan/influxdb_client/client"
+	"github.com/xJarvis/huashan/influxdb_client/client"
 )
 
 // Create a new client

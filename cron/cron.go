@@ -1,8 +1,8 @@
 package cron
 
 import (
-	"huashan/exerror"
-	"huashan/logger"
+	"github.com/xJarvis/huashan/exerror"
+	"github.com/xJarvis/huashan/logger"
 	"fmt"
 	"github.com/jakecoffman/cron"
 	"strconv"

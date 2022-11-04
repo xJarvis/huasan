@@ -15,7 +15,7 @@
 package exrsa
 
 import (
-	"huashan/excrypt"
+	"github.com/xJarvis/huashan/excrypt"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"

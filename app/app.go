@@ -3,18 +3,18 @@ package app
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"huashan/cache"
-	"huashan/command"
-	"huashan/config"
-	"huashan/cron"
-	"huashan/directory"
-	"huashan/exerror"
-	"huashan/exsignal"
-	"huashan/influxdb_client"
-	"huashan/logger"
-	"huashan/nosql/mongo"
-	"huashan/orm"
-	"huashan/redis"
+	"github.com/xJarvis/huashan/cache"
+	"github.com/xJarvis/huashan/command"
+	"github.com/xJarvis/huashan/config"
+	"github.com/xJarvis/huashan/cron"
+	"github.com/xJarvis/huashan/directory"
+	"github.com/xJarvis/huashan/exerror"
+	"github.com/xJarvis/huashan/exsignal"
+	"github.com/xJarvis/huashan/influxdb_client"
+	"github.com/xJarvis/huashan/logger"
+	"github.com/xJarvis/huashan/nosql/mongo"
+	"github.com/xJarvis/huashan/orm"
+	"github.com/xJarvis/huashan/redis"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -151,5 +151,5 @@ func SignalRun() {
 	exsignal.RegisterSignal(syscall.SIGHUP,ReleaseEnv)
 	exsignal.RegisterSignal(syscall.SIGINT,ReleaseEnv)
 	exsignal.RegisterSignal(syscall.SIGQUIT,ReleaseEnv)
-	go exsignal.CatchSignal()
+	exsignal.CatchSignal()
 }
