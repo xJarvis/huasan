@@ -5,20 +5,13 @@ import (
 	"github.com/pkg/errors"
 	"github.com/xjarvis/huashan/app/command"
 	config2 "github.com/xjarvis/huashan/app/config"
-	"github.com/xjarvis/huashan/cache/local"
-	"github.com/xjarvis/huashan/cache/redis"
 	error2 "github.com/xjarvis/huashan/lib/error"
-	"github.com/xjarvis/huashan/lib/exsignal"
-	"github.com/xjarvis/huashan/lib/file/directory"
+	"github.com/xjarvis/huashan/lib/signal"
+    "github.com/xjarvis/huashan/lib/file/directory"
 	"github.com/xjarvis/huashan/log/logger"
-	"github.com/xjarvis/huashan/mysql/orm"
-	"github.com/xjarvis/huashan/nosql/influxdb"
-	"github.com/xjarvis/huashan/nosql/mongo"
-	"github.com/xjarvis/huashan/schedule/cron"
 	"os"
 	"path/filepath"
 	"syscall"
-	"time"
 )
 
 var (
@@ -70,38 +63,6 @@ func InitEnv() {
 		logger.Initialize(logFile,false)
 	}
 
-	//缓存启动
-	if config2.Get("cache.open") == "yes" {
-		local.Initialize(time.Duration(config2.GetInt("cache.expire")) * time.Second)
-	}
-
-	//Influx 启动
-	if config2.Get("influx.open") == "yes" {
-		influxdb.Initialize()
-		influxdb.Run()
-	}
-
-	// Redis 初始化
-	if config2.Get("redis.open") == "yes" {
-		redis.Initialize()
-	}
-	//DB ORM初始化
-	if config2.Get("database.open") == "yes" {
-		orm.Initialize()
-	}
-
-	//mongo 初始化
-	if config2.Get("mgo.open") == "yes" {
-		mongo.Initialize()
-	}
-
-	//计划任务
-	if config2.Get("task.open") == "yes" {
-		cron.Initialize()
-	}
-
-	/*todo 核心业务环境启动*/
-
 	logger.Info("app env init finish!")
 }
 
@@ -115,41 +76,14 @@ func ReleaseEnv() {
 		os.Exit(0) // 程序退出
 	}()
 
-	/*todo 核心业务环境释放*/
-
-	//计划任务释放
-	if config2.Get("task.open") == "yes" {
-		cron.UnInitialize()
-	}
-
-	//MONGO 釋放
-	if config2.Get("mgo.open") == "yes" {
-		mongo.UnInitialize()
-	}
-
-	//DB ORM释放
-	if config2.Get("database.open") == "yes" {
-		orm.UnInitialize()
-	}
-
-	// Redis释放
-	if config2.Get("redis.open") == "yes" {
-		redis.UnInitialize()
-	}
-
-	//缓存釋放
-	if config2.Get("cache.open") == "yes" {
-		local.UnInitialize()
-	}
-
 	logger.Info("app env release finish!")
 	fmt.Println("app env release finish!")
 }
 
 // SignalRun /**退出信号捕获处理*/
 func SignalRun() {
-	exsignal.RegisterSignal(syscall.SIGHUP,ReleaseEnv)
-	exsignal.RegisterSignal(syscall.SIGINT,ReleaseEnv)
-	exsignal.RegisterSignal(syscall.SIGQUIT,ReleaseEnv)
-	exsignal.CatchSignal()
+	signal.RegisterSignal(syscall.SIGHUP,ReleaseEnv)
+	signal.RegisterSignal(syscall.SIGINT,ReleaseEnv)
+	signal.RegisterSignal(syscall.SIGQUIT,ReleaseEnv)
+	signal.CatchSignal()
 }

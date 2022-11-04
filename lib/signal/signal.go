@@ -1,4 +1,4 @@
-package exsignal
+package signal
 
 import (
 	"github.com/xjarvis/huashan/log/logger"

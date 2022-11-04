@@ -110,7 +110,6 @@ func Fatal(v ...interface{}) {
 	Logger.Fatal(v...)
 }
 
-/**初始化日志系统*/
 func Initialize(logFile string, isDebug bool) {
 	debug = isDebug
 	var err error
