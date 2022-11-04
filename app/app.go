@@ -3,18 +3,18 @@ package app
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/xJarvis/huashan/cache"
-	"github.com/xJarvis/huashan/command"
-	"github.com/xJarvis/huashan/config"
-	"github.com/xJarvis/huashan/cron"
-	"github.com/xJarvis/huashan/directory"
-	"github.com/xJarvis/huashan/exerror"
-	"github.com/xJarvis/huashan/exsignal"
-	"github.com/xJarvis/huashan/influxdb_client"
-	"github.com/xJarvis/huashan/logger"
-	"github.com/xJarvis/huashan/nosql/mongo"
-	"github.com/xJarvis/huashan/orm"
-	"github.com/xJarvis/huashan/redis"
+	"github.com/xjarvis/huashan/app/command"
+	config2 "github.com/xjarvis/huashan/app/config"
+	"github.com/xjarvis/huashan/cache/local"
+	"github.com/xjarvis/huashan/cache/redis"
+	error2 "github.com/xjarvis/huashan/lib/error"
+	"github.com/xjarvis/huashan/lib/exsignal"
+	"github.com/xjarvis/huashan/lib/file/directory"
+	"github.com/xjarvis/huashan/log/logger"
+	"github.com/xjarvis/huashan/mysql/orm"
+	"github.com/xjarvis/huashan/nosql/influxdb"
+	"github.com/xjarvis/huashan/nosql/mongo"
+	"github.com/xjarvis/huashan/schedule/cron"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -45,17 +45,17 @@ func InitEnv() {
 	if !filepath.IsAbs(mCmd["cfg"]) {
 		mCmd["cfg"] = filepath.Join(AppDir, mCmd["cfg"])
 	}
-	config.InitConfig(mCmd["cfg"])
+	config2.InitConfig(mCmd["cfg"])
 	for k,cmd := range mCmd {
-		config.SetValue("command" + "." +  k,cmd)
+		config2.SetValue("command" + "." +  k,cmd)
 	}
 
-	if "true" == config.Get("system.debug") {
-		config.SetValue("command.env","dev")
+	if "true" == config2.Get("system.debug") {
+		config2.SetValue("command.env","dev")
 	}
 
 	//日志文件导入
-	logFile,err := config.GetValue("log.file")
+	logFile,err := config2.GetValue("log.file")
 	if err != nil {
 		panic(err)
 	}
@@ -64,39 +64,39 @@ func InitEnv() {
 	}
 
 	//日志文件初始化
-	if config.DEBUG == config.Get("command.env") {
+	if config2.DEBUG == config2.Get("command.env") {
 		logger.Initialize(logFile,true)
 	} else {
 		logger.Initialize(logFile,false)
 	}
 
 	//缓存启动
-	if config.Get("cache.open") == "yes" {
-		cache.Initialize(time.Duration(config.GetInt("cache.expire")) * time.Second)
+	if config2.Get("cache.open") == "yes" {
+		local.Initialize(time.Duration(config2.GetInt("cache.expire")) * time.Second)
 	}
 
 	//Influx 启动
-	if config.Get("influx.open") == "yes" {
-		influxdb_client.Initialize()
-		influxdb_client.Run()
+	if config2.Get("influx.open") == "yes" {
+		influxdb.Initialize()
+		influxdb.Run()
 	}
 
 	// Redis 初始化
-	if config.Get("redis.open") == "yes" {
+	if config2.Get("redis.open") == "yes" {
 		redis.Initialize()
 	}
 	//DB ORM初始化
-	if config.Get("database.open") == "yes" {
+	if config2.Get("database.open") == "yes" {
 		orm.Initialize()
 	}
 
 	//mongo 初始化
-	if config.Get("mgo.open") == "yes" {
+	if config2.Get("mgo.open") == "yes" {
 		mongo.Initialize()
 	}
 
 	//计划任务
-	if config.Get("task.open") == "yes" {
+	if config2.Get("task.open") == "yes" {
 		cron.Initialize()
 	}
 
@@ -109,7 +109,7 @@ func InitEnv() {
 func ReleaseEnv() {
 	//logger释放
 	defer func() {
-		exerror.Catch()
+		error2.Catch()
 		logger.UnInitialize()
 		fmt.Println("application exit!")
 		os.Exit(0) // 程序退出
@@ -118,28 +118,28 @@ func ReleaseEnv() {
 	/*todo 核心业务环境释放*/
 
 	//计划任务释放
-	if config.Get("task.open") == "yes" {
+	if config2.Get("task.open") == "yes" {
 		cron.UnInitialize()
 	}
 
 	//MONGO 釋放
-	if config.Get("mgo.open") == "yes" {
+	if config2.Get("mgo.open") == "yes" {
 		mongo.UnInitialize()
 	}
 
 	//DB ORM释放
-	if config.Get("database.open") == "yes" {
+	if config2.Get("database.open") == "yes" {
 		orm.UnInitialize()
 	}
 
 	// Redis释放
-	if config.Get("redis.open") == "yes" {
+	if config2.Get("redis.open") == "yes" {
 		redis.UnInitialize()
 	}
 
 	//缓存釋放
-	if config.Get("cache.open") == "yes" {
-		cache.UnInitialize()
+	if config2.Get("cache.open") == "yes" {
+		local.UnInitialize()
 	}
 
 	logger.Info("app env release finish!")

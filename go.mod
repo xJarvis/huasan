@@ -1,4 +1,4 @@
-module github.com/xJarvis/huashan
+module github.com/xjarvis/huashan
 
 go 1.17
 
